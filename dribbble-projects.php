@@ -5,11 +5,18 @@
  * a json dump for each one found
  */
 
+if ( file_exists( dirname( __FILE__ ) . '/dribbble-projects-config.php' ) ) {
 
-$dribbbleUser = 'user';
-$dribbbleAccessToken = 'accesstoken';
+    include( dirname( __FILE__ ) . '/dribbble-projects-config.php' );
 
-$outputLocation = '/path/to/data/';
+} else {
+
+    $dribbbleUser = 'user';
+    $dribbbleAccessToken = 'accesstoken';
+
+    $outputLocation = '/path/to/data/';
+
+}
 
 function requestData($url, $json = false) {
 
