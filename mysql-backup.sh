@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ -f "mysql-backup-config.sh" ];
+if [ -f "./mysql-backup-config.sh" ];
 then
-    source "mysql-backup-config.sh"
+    source "./mysql-backup-config.sh"
 else
     DIRECTORY_CONFIG="mysql-backup-configs"
     DIRECTORY_BACKUPS="backups"
@@ -26,7 +26,7 @@ function backup_database {
         mkdir -p $PATH_TARGET
     fi
 
-    $MYSQLDUMP -u $DBUSER -h $DBHOST -p$DBPASS | gzip > $PATH_TARGET/${DB_NAME}_$DATE_NOW.sql.gz
+    $MYSQLDUMP -u $DB_USER -h $DB_HOST -p$DB_PASS $DB_NAME | gzip > $PATH_TARGET/${DB_NAME}_$DATE_NOW.sql.gz
 
 }
 
