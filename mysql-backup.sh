@@ -1,10 +1,11 @@
 #!/bin/bash
 
-CONFIG=$1
 
-if [ -f "$CONFIG" ];
+DIRECTORY_WORKING="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if [ -f $DIRECTORY_WORKING/"mysql-backup-config.sh" ];
 then
-    source "$CONFIG"
+    source $DIRECTORY_WORKING/"mysql-backup-config.sh"
 else
     DIRECTORY_CONFIG="mysql-backup-configs"
     DIRECTORY_BACKUPS="backups"
@@ -32,7 +33,7 @@ function backup_database {
 
 }
 
-if [ "$(ls -A $DIRECTORY_CONFIG)" ];
+if [ -d $DIRECTORY_CONFIG ];
 then
 
     for file in $DIRECTORY_CONFIG/*
