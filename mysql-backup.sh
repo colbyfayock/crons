@@ -1,8 +1,10 @@
 #!/bin/bash
 
-if [ -f "./mysql-backup-config.sh" ];
+CONFIG=$1
+
+if [ -f "$CONFIG" ];
 then
-    source "./mysql-backup-config.sh"
+    source "$CONFIG"
 else
     DIRECTORY_CONFIG="mysql-backup-configs"
     DIRECTORY_BACKUPS="backups"
