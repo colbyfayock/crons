@@ -89,6 +89,22 @@ function personalizeAffiliateLinks( $items, $tag = false ) {
 
 }
 
+function grabImageFromHtml($html) {
+    if (stripos($html, '<img') !== false) {
+        $imgsrc_regex = '#<\s*img [^\>]*src\s*=\s*(["\'])(.*?)\1#im';
+        preg_match($imgsrc_regex, $html, $matches);
+        unset($imgsrc_regex);
+        unset($html);
+        if (is_array($matches) && !empty($matches)) {
+            return $matches[2];
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
 function makeRssItem( $item ) {
 
     $rssItem = '';
@@ -98,6 +114,7 @@ function makeRssItem( $item ) {
     $rssItem .= '<title>' . htmlspecialchars( $item['title'] ) . '</title>';
     $rssItem .= '<link>' . htmlspecialchars( $item['link'] ) . '</link>';
     $rssItem .= '<description>' . htmlspecialchars( $item['description'] ) . '</description>';
+    $rssItem .= '<image>' . htmlspecialchars( grabImageFromHtml($item['description']) ) . '</image>';
     $rssItem .= '<pubDate>' . htmlspecialchars( date(DATE_RSS, $item['pubDate']) ) . '</pubDate>';
     $rssItem .= '<guid>' . htmlspecialchars( $item['link'] . '&time=' . $item['pubDate'] ) . '</guid>';
 
