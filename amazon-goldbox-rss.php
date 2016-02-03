@@ -89,6 +89,8 @@ function personalizeAffiliateLinks( $items, $tag = false ) {
 
 }
 
+// http://zytzagoo.net/blog/2008/01/23/extracting-images-from-html-using-regular-expressions/
+
 function grabImageFromHtml($html) {
     if (stripos($html, '<img') !== false) {
         $imgsrc_regex = '#<\s*img [^\>]*src\s*=\s*(["\'])(.*?)\1#im';
