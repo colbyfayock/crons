@@ -116,7 +116,7 @@ function makeRssItem( $item ) {
     $rssItem .= '<title>' . htmlspecialchars( $item['title'] ) . '</title>';
     $rssItem .= '<link>' . htmlspecialchars( $item['link'] ) . '</link>';
     $rssItem .= '<description>' . htmlspecialchars( $item['description'] ) . '</description>';
-    $rssItem .= '<image>' . htmlspecialchars( grabImageFromHtml($item['description']) ) . '</image>';
+    $rssItem .= '<image>' . htmlspecialchars( str_replace('_SL160_', '_SL800_', grabImageFromHtml($item['description']) ) ) . '</image>';
     $rssItem .= '<pubDate>' . htmlspecialchars( date(DATE_RSS, $item['pubDate']) ) . '</pubDate>';
     $rssItem .= '<guid>' . htmlspecialchars( $item['link'] . '&time=' . $item['pubDate'] ) . '</guid>';
 
