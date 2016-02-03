@@ -142,9 +142,9 @@ $feedData = xmlToArray( requestData( getGoldBoxUrl() ) );
 
 if ( $feedSorted = sortFeedArray( $feedData, 'pubDate' ) ) {
     if ( $feedPersonalized = personalizeAffiliateLinks( array_slice( $feedSorted, 0, $feedLimit ), $affiliateTagId ) ) {
-echo makeRssDoc($feedPersonalized);
+
         try {
-            // file_put_contents ( $outputLocation . '/' . $outputFilename , makeRssDoc($feedPersonalized) );
+            file_put_contents ( $outputLocation . '/' . $outputFilename , makeRssDoc($feedPersonalized) );
         } catch(Exception $e) {
             echo 'Caught exception: ',  $e->getMessage(), "\n";
         }
