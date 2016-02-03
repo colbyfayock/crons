@@ -99,7 +99,7 @@ function makeRssItem( $item ) {
     $rssItem .= '<link>' . htmlspecialchars( $item['link'] ) . '</link>';
     $rssItem .= '<description>' . htmlspecialchars( $item['description'] ) . '</description>';
     $rssItem .= '<pubDate>' . htmlspecialchars( date(DATE_RSS, $item['pubDate']) ) . '</pubDate>';
-    $rssItem .= '<guid>' . htmlspecialchars( $item['guid'] ) . '</guid>';
+    $rssItem .= '<guid>' . htmlspecialchars( $item['link'] . '&time=' . $item['pubDate'] ) . '</guid>';
 
     $rssItem .= '</item>';
 
