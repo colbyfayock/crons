@@ -1,8 +1,8 @@
 <?
 
 /*
- * Grabs dribbble user's project list and writes
- * a json dump for each one found
+ * Grabs Amazon's Goldbox RSS Feed
+ * Outputs to a valid RSS document
  */
 
 date_default_timezone_set( 'UTC' );
