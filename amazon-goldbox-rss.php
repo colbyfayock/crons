@@ -5,6 +5,8 @@
  * a json dump for each one found
  */
 
+date_default_timezone_set( 'UTC' );
+
 if ( file_exists( dirname( __FILE__ ) . '/amazon-goldbox-rss-config.php' ) ) {
 
     include( dirname( __FILE__ ) . '/amazon-goldbox-rss-config.php' );
@@ -12,7 +14,9 @@ if ( file_exists( dirname( __FILE__ ) . '/amazon-goldbox-rss-config.php' ) ) {
 } else {
 
     $outputLocation = '/path/to/dir';
+    $outputFilename = 'amazon-goldbox-100.xml';
     $affiliateTagId = 'newtag';
+    $feedLimit = 100;
 
 }
 
@@ -46,7 +50,7 @@ function xmlToArray( $feed ) {
             'title' => (string) $item->title,
             'link' => (string) $item->link,
             'description' => (string) $item->description,
-            'pubDate' => (string) $item->pubDate,
+            'pubDate' => (string) strtotime( $item->pubDate ),
             'guid' => (string) $item->guid,
         );
     }
@@ -85,10 +89,65 @@ function personalizeAffiliateLinks( $items, $tag = false ) {
 
 }
 
+function makeRssItem( $item ) {
+
+    $rssItem = '';
+
+    $rssItem .= '<item>';
+    
+    $rssItem .= '<title>' . htmlspecialchars( $item['title'] ) . '</title>';
+    $rssItem .= '<link>' . htmlspecialchars( $item['link'] ) . '</link>';
+    $rssItem .= '<description>' . htmlspecialchars( $item['description'] ) . '</description>';
+    $rssItem .= '<pubDate>' . htmlspecialchars( date(DATE_RSS, $item['pubDate']) ) . '</pubDate>';
+    $rssItem .= '<guid>' . htmlspecialchars( $item['guid'] ) . '</guid>';
+
+    $rssItem .= '</item>';
+
+
+    return $rssItem;
+
+}
+
+function makeRssDoc( $items ) {
+
+    $dom = new DOMDocument;
+    $dom->preserveWhiteSpace = FALSE;
+    $dom->formatOutput = TRUE;
+
+    $rss = '';
+
+    $rss .= '<rss version="2.0">';
+    $rss .= '<channel>';
+
+    $rss .= '<title>Amazon.com Gold Box Deals</title>';
+    $rss .= '<link>http://www.amazon.com/gp/goldbox</link>';
+    $rss .= '<description>Amazon.com Gold Box Deals</description>';
+    $rss .= '<lastBuildDate>' . date(DATE_RSS) . '</lastBuildDate>';
+
+
+    foreach ( $items as $item ) {
+        $rss .= makeRssItem($item);
+    }
+
+    $rss .= '</channel>';
+    $rss .= '</rss>';
+
+    $dom->loadXML($rss);
+
+    return $dom->saveXml();;
+
+}
+
 $feedData = xmlToArray( requestData( getGoldBoxUrl() ) );
 
 if ( $feedSorted = sortFeedArray( $feedData, 'pubDate' ) ) {
-    if ( $feedPersonalized = personalizeAffiliateLinks( array_slice( $feedSorted, 0, 100 ), $affiliateTagId ) ) {
-        print_r($feedPersonalized);
+    if ( $feedPersonalized = personalizeAffiliateLinks( array_slice( $feedSorted, 0, $feedLimit ), $affiliateTagId ) ) {
+echo makeRssDoc($feedPersonalized);
+        try {
+            // file_put_contents ( $outputLocation . '/' . $outputFilename , makeRssDoc($feedPersonalized) );
+        } catch(Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+
     }
 }
