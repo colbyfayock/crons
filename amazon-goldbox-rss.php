@@ -46,6 +46,7 @@ function xmlToArray( $feed ) {
     $tempFeed = array();
 
     foreach( $xml->channel->item as $item ) {
+        if ( strpos( (string) $item->link, 'product/null' ) ) continue;
         $tempFeed[] = array(
             'title' => (string) $item->title,
             'link' => (string) $item->link,
