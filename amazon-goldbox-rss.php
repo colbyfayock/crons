@@ -117,8 +117,6 @@ function isBlacklistedItem($string, $list) {
     if ( !is_array($list) ) return false;
 
     foreach ( $list as $rule ) {
-        echo $rule . "\n";
-        echo $string . "\n";
         if ( strpos( strtolower($string), strtolower($rule) ) ) {
             return true;
         }
