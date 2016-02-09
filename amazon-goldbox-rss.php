@@ -17,6 +17,7 @@ if ( file_exists( dirname( __FILE__ ) . '/amazon-goldbox-rss-config.php' ) ) {
     $outputFilename = 'amazon-goldbox-100.xml';
     $affiliateTagId = 'newtag';
     $feedLimit = 100;
+    $blackList = false;
 
 }
 
@@ -40,16 +41,19 @@ function getGoldBoxUrl() {
     return 'http://rssfeeds.s3.amazonaws.com/goldbox';
 };
 
-function xmlToArray( $feed ) {
+function xmlToArray( $feed, $blackList ) {
 
     $xml = new SimpleXMLElement($feed);
     $tempFeed = array();
 
     foreach( $xml->channel->item as $item ) {
-        if ( strpos( (string) $item->link, 'product/null' ) ) continue;
+        $itemLink = (string) $item->link;
+        $itemTitle = (string) $item->title;
+        if ( strpos( $itemLink, 'product/null' ) ) continue;
+        if ( isBlacklistedItem($itemTitle, $blackList) ) continue;
         $tempFeed[] = array(
-            'title' => (string) $item->title,
-            'link' => (string) $item->link,
+            'title' => $itemTitle,
+            'link' => $itemLink,
             'description' => (string) $item->description,
             'pubDate' => (string) strtotime( $item->pubDate ),
             'guid' => (string) $item->guid,
@@ -108,6 +112,22 @@ function grabImageFromHtml($html) {
     }
 }
 
+function isBlacklistedItem($string, $list) {
+
+    if ( !is_array($list) ) return false;
+
+    foreach ( $list as $rule ) {
+        echo $rule . "\n";
+        echo $string . "\n";
+        if ( strpos($string, $rule) ) {
+            return true;
+        }
+    }
+
+    return false;
+
+}
+
 function makeRssItem( $item ) {
 
     $rssItem = '';
@@ -158,7 +178,7 @@ function makeRssDoc( $items ) {
 
 }
 
-$feedData = xmlToArray( requestData( getGoldBoxUrl() ) );
+$feedData = xmlToArray( requestData( getGoldBoxUrl() ), $blackList );
 
 if ( $feedSorted = sortFeedArray( $feedData, 'pubDate' ) ) {
     if ( $feedPersonalized = personalizeAffiliateLinks( array_slice( $feedSorted, 0, $feedLimit ), $affiliateTagId ) ) {
