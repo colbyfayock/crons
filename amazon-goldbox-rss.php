@@ -6,6 +6,7 @@
  */
 
 date_default_timezone_set( 'UTC' );
+$currentDate = date("Ymd");
 
 if ( file_exists( dirname( __FILE__ ) . '/amazon-goldbox-rss-config.php' ) ) {
 
@@ -77,6 +78,20 @@ function sortFeedArray( $feed, $key = false ) {
     usort( $feed, build_sorter( $key ) );
 
     return $feed;
+
+}
+
+function getTodaysItems( $feed, $currentDate ) {
+
+    if ( !is_array($feed) ) return false;
+
+    $feedToday = array();
+
+    foreach ( $feed as $item ) {
+        if ( $currentDate === date("Ymd", $item['pubDate']) ) array_push($feedToday, $item);
+    }
+
+    return $feedToday;
 
 }
 
@@ -178,11 +193,23 @@ function makeRssDoc( $items ) {
 
 $feedData = xmlToArray( requestData( getGoldBoxUrl() ), $blackList );
 
-if ( $feedSorted = sortFeedArray( $feedData, 'pubDate' ) ) {
+if ( $feedSorted = sortFeedArray( $feedData, 'pubDate', $feedLimitToday ) ) {
     if ( $feedPersonalized = personalizeAffiliateLinks( array_slice( $feedSorted, 0, $feedLimit ), $affiliateTagId ) ) {
 
         try {
             file_put_contents ( $outputLocation . '/' . $outputFilename , makeRssDoc($feedPersonalized) );
+        } catch(Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+
+    }
+}
+
+if ( $feedToday = getTodaysItems( $feedData, $currentDate ) ) {
+    if ( $feedTodayPersonalized = personalizeAffiliateLinks( array_slice( $feedToday, 0, $feedLimit ), $affiliateTagId ) ) {
+
+        try {
+            file_put_contents ( $outputTodayLocation . '/' . $outputTodayFilename , makeRssDoc($feedTodayPersonalized) );
         } catch(Exception $e) {
             echo 'Caught exception: ',  $e->getMessage(), "\n";
         }
