@@ -5,7 +5,7 @@
  * Outputs to a valid RSS document
  */
 
-date_default_timezone_set( 'UTC' );
+date_default_timezone_set( 'US/Eastern' );
 $currentDate = date("Ymd");
 
 if ( file_exists( dirname( __FILE__ ) . '/amazon-goldbox-rss-config.php' ) ) {
